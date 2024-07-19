@@ -1,0 +1,204 @@
+1:
+#Addition:
+ORG 00H
+MOV A, #30H
+MOV B, #20H
+ADD A, B
+MOV R0, A
+END
+
+#Subtraction
+ORG 00H
+MOV A, #30H
+MOV B, #20H
+SUBB A, B
+MOV R0, A
+END
+
+#Multiplication
+ORG 00H
+MOV A, #10H
+MOV B, #02H
+MUL AB
+MOV R0, A
+MOV R1, B
+END
+
+#Division
+ORG 00H
+MOV A, #06H
+MOV B, #04H
+DIV AB
+MOV R0, A
+MOV R1, B
+END
+
+2:
+Descending order
+ORG 0000H
+MOV R1,#40H
+MOV R3,#0AH
+LOOP1 : MOV 02H,03H
+MOV B,@R1
+4
+MOV 00H,01H
+INC R0
+LOOP2: MOV A,@R0
+CJNE A,B,CHECK
+MOV @R0,#00H
+SJMP CONTINUE
+CHECK :JC CONTINUE
+MOV @R0,B
+MOV @R1,A
+MOV B,@R1
+CONTINUE :INC R0
+DJNZ R2,LOOP2
+INC R1
+DJNZ R3, LOOP1
+SJMP $
+END
+
+Ascending Order
+ORG 0000H
+MOV R1,#40H
+MOV R3,#0AH
+LOOP1 : MOV 02H,03H
+MOV B,@R1
+MOV 00H,01H
+INC R0
+LOOP2: MOV A,@R0
+CJNE A,B,CHECK
+MOV @R0,#00H
+SJMP CONTINUE
+CHECK :JNC CONTINUE
+MOV @R0,B
+MOV @R1,A
+MOV B,@R1
+CONTINUE :INC R0
+DJNZ R2,LOOP2
+INC R1
+DJNZ R3, LOOP1
+SJMP $
+END
+
+3:
+org 0000h
+mov r1,#4h
+mov r0,41h
+L2: add a, @r0
+inc r0
+djnz r1,L2
+mov 45h,a
+end
+
+4:
+#include <reg51.h>
+void MSDelay(unsigned int);
+sbit Dsensor=P1^1;
+sbit Buzzer=P1^7;
+void main(void)
+{
+Dsensor=1; //make P1.1 an input
+while (1)
+{
+while (Dsensor==1)//while it opens
+{
+Buzzer=0;
+MSDelay(200);
+Buzzer=1;
+MSDelay(200);
+}
+}
+}
+
+7:
+module updowncntr(q, clr, clk, mod);
+output reg [3:0] q;
+input clr;
+input clk;
+input mod;
+always@(posedge clk)
+begin
+case({clr,mod})
+2'b11 : q=0;
+2'b10 : q=0;
+2'b01 : q=q+1;
+2'b00 : q=q-1;
+endcase
+end
+endmodule
+
+SISO:
+Modula siso(q,clk,clr);
+Input si,clk;
+Output so;
+Reg so;
+Reg [2:0] d;
+Always @(posedge clk)
+Begin
+d[0]=si;
+d[1]=d[0];
+d[2]=d[1];
+so=d[2];
+end
+endmodule
+
+10:
+input clk, rst;
+wire feedback;
+assign feedback = ~(out[3] ^ out[2]);
+always @(posedge clk, posedge rst)
+begin
+ if (rst)
+ out = 4'b0;
+ else
+ out = {out[2:0],feedback};
+ end
+endmodule
+
+11:
+RAM:
+module RAM_code(out, in, addr, RW, CS);
+output [7:0] out;
+input [7:0] in;
+input [3:0] addr;
+input RW, CS;
+reg [7:0] out;
+reg [7:0] DATA[15:0];
+always @(posedge CS)
+begin
+if(RW==1'b0) //READ
+out=DATA[addr];
+else
+if(RW==1'b1) //WRITE
+DATA[addr]=in;
+else
+out=8'bz;
+end
+endmodule
+
+ROM:
+module ROM_code(out, addr, CS);
+output[15:0] out;
+input[3:0] addr;
+input CS;
+reg [15:0] out;
+reg [15:0] ROM[15:0];
+always @(posedge CS)
+begin
+ROM[0]=16'h5601; ROM[1]=16'h3401;
+ROM[2]=16'h1801; ROM[3]=16'h0ac1;
+ROM[4]=16'h0521; ROM[5]=16'h0221;
+ROM[6]=16'h5601; ROM[7]=16'h5401;
+ROM[8]=16'h4801; ROM[9]=16'h3801;
+ROM[10]=16'h3001; ROM[11]=16'h2401;
+ROM[12]=16'h1c01; ROM[13]=16'h1601;
+ROM[14]=16'h5601; ROM[15]=16'h5401;
+out=ROM[addr];
+end
+endmodule
+
+
+
+
+
